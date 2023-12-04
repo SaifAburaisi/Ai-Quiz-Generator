@@ -10,7 +10,7 @@ from streamlit.components.v1 import html
 
 load_dotenv()
 
-
+# Function to navigate to another page
 def nav_page(page_name, timeout_secs=3):
     nav_script = """
         <script type="text/javascript">
@@ -37,11 +37,12 @@ def nav_page(page_name, timeout_secs=3):
     html(nav_script)
 
 
+# Function to generate questions
 def generate_questions(topic, num_of_questions):
+
     response_schemas = [
         ResponseSchema(name="question", description="A multiple choice question generated from input text snippet."),
-        ResponseSchema(name="options",
-                       description="Possible choices for the multiple choice question as a python list."),
+        ResponseSchema(name="options", description="Possible choices for the multiple choice question as a python list."),
         ResponseSchema(name="answer", description="Correct answer for the question.")
     ]
     output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
@@ -80,12 +81,17 @@ def main():
 
     topic = st.text_input("Topic", st.session_state["topic"])
     num_of_questions = st.text_input("Number of questions", st.session_state["num_of_questions"])
+
     if st.button("Start Quiz") and topic != "" and num_of_questions != "":
+
         st.session_state["topic"] = topic
         st.session_state["num_of_questions"] = num_of_questions
+
         st.write("Please wait until quiz is generated.")
+
         questions = generate_questions(topic, num_of_questions)
         st.session_state["data"] = questions
+
         nav_page("quiz")
 
 
