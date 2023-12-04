@@ -48,12 +48,11 @@ def generate_questions(topic, num_of_questions):
     format_instructions = output_parser.get_format_instructions()
 
     prompt_template = PromptTemplate(
-        template="Generate {num} mcq's about {top}, where each question has 4 choices and the"
-                 "answer"
-                 "\n{format_instructions}with commas between each question\n", input_variables=["num", "top"],
+        template="""Generate {num} mcq's about {top}, where each question has 4 choices and the answer
+                 \n{format_instructions}with commas between each question\n""", input_variables=["num", "top"],
         partial_variables={"format_instructions": format_instructions})
 
-    llm = ChatOpenAI(model="gpt-3.5-turbo")
+    llm = ChatOpenAI(model="gpt-4")
 
     llm_chain = LLMChain(llm=llm, prompt=prompt_template)
 
