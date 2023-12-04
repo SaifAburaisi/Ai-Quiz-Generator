@@ -8,8 +8,6 @@ import re
 from dotenv import load_dotenv
 from streamlit.components.v1 import html
 
-
-
 load_dotenv()
 
 
@@ -40,20 +38,20 @@ def nav_page(page_name, timeout_secs=3):
 
 
 def generate_questions(topic, num_of_questions):
-
-
     response_schemas = [
         ResponseSchema(name="question", description="A multiple choice question generated from input text snippet."),
-        ResponseSchema(name="options", description="Possible choices for the multiple choice question as a python list."),
+        ResponseSchema(name="options",
+                       description="Possible choices for the multiple choice question as a python list."),
         ResponseSchema(name="answer", description="Correct answer for the question.")
     ]
     output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
     format_instructions = output_parser.get_format_instructions()
 
-    prompt_template = PromptTemplate(template="Generate {num} mcq's about {top}, where each question has 4 choices and the"
-                                              "answer"
-                                              "\n{format_instructions}with commas between each question\n", input_variables=["num", "top"],
-                                     partial_variables={"format_instructions": format_instructions})
+    prompt_template = PromptTemplate(
+        template="Generate {num} mcq's about {top}, where each question has 4 choices and the"
+                 "answer"
+                 "\n{format_instructions}with commas between each question\n", input_variables=["num", "top"],
+        partial_variables={"format_instructions": format_instructions})
 
     llm = ChatOpenAI(model="gpt-3.5-turbo")
 
@@ -69,25 +67,26 @@ def generate_questions(topic, num_of_questions):
 
     return questions_dict
 
+
 def main():
     st.set_page_config(page_title="Quiz Generator", page_icon="❔")
 
     st.title("Quiz Generator")
     if "topic" not in st.session_state:
-        st.session_state["topic"]=""
+        st.session_state["topic"] = ""
     if "num_of_questions" not in st.session_state:
-        st.session_state["num_of_questions"]=""
+        st.session_state["num_of_questions"] = ""
     if "data" not in st.session_state:
-        st.session_state["data"]=""
+        st.session_state["data"] = ""
 
     topic = st.text_input("Topic", st.session_state["topic"])
     num_of_questions = st.text_input("Number of questions", st.session_state["num_of_questions"])
     if st.button("Start Quiz") and topic != "" and num_of_questions != "":
-        st.session_state["topic"]=topic
-        st.session_state["num_of_questions"]=num_of_questions
-        st.write("You will be redirected to the quiz page when quiz is generated.")
-        questions=generate_questions(topic,num_of_questions)
-        st.session_state["data"]=questions
+        st.session_state["topic"] = topic
+        st.session_state["num_of_questions"] = num_of_questions
+        st.write("Please wait until quiz is generated.")
+        questions = generate_questions(topic, num_of_questions)
+        st.session_state["data"] = questions
         nav_page("quiz")
 
 
